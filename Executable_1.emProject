@@ -56,6 +56,10 @@
       <file file_name="arm_common_tables.h" />
       <file file_name="arm_common_tables.c" />
       <file file_name="arm_nn_add_q7.c" />
+      <file file_name="arm_math.h" />
+      <file file_name="arm_convolve_HWC_q7_RGB.c" />
+      <file file_name="arm_relu_q7.c" />
+      <file file_name="arm_softmax_q7.c" />
     </folder>
     <folder Name="RTT Files">
       <file file_name="SEGGER_RTT.c" />
@@ -76,7 +80,6 @@
     </folder>
     <folder Name="Source Files">
       <configuration Name="Common" filter="c;cpp;cxx;cc;h;s;asm;inc" />
-      <file file_name="main.c" />
       <configuration
         Name="Debug"
         c_preprocessor_definitions=""
@@ -104,7 +107,12 @@
       link_symbol_definitions=""
       linker_additional_files="C:\\Users\\Devan\\Documents\\SEGGER Embedded Studio for ARM Projects\\Executable_1/arm_nnfunctions.h" />
     <file file_name="libarm_ARMv8MMLl_math.a" />
-    <folder Name="ci-far10 weights, bias and image data" />
+    <folder Name="ci-far10 weights, bias and image data">
+      <file file_name="ci-far10 weights, bias and images/arm_nnexamples_cifar10_inputs.h" />
+      <file file_name="ci-far10 weights, bias and images/arm_nnexamples_cifar10_parameter.h" />
+      <file file_name="ci-far10 weights, bias and images/arm_nnexamples_cifar10_weights.h" />
+      <file file_name="arm_nnexamples_cifar10.cpp" />
+    </folder>
   </project>
   <configuration
     Name="Debug"
