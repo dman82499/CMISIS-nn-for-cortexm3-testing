@@ -1,0 +1,902 @@
+
+
+***************************************************************************************
+***                                                                                 ***
+***                                LINK INFORMATION                                 ***
+***                                                                                 ***
+***************************************************************************************
+
+Copyright (c) 2017-2019 SEGGER Microcontroller GmbH    www.segger.com
+SEGGER Linker 2.34a compiled May 15 2020 19:07:30
+
+Command line:
+  --add-region
+  FLASH1=0x00001000@0x00ff8000
+  --add-region
+  RAM1=0x00080000@0x20000000
+  --defsym=__STACKSIZE__=1024
+  --defsym=__STACKSIZE_PROCESS__=0
+  --defsym=__HEAPSIZE__=1024
+  --full-section-headers
+  -ereset_handler
+  --defsym=__vfprintf=__vfprintf_int_nwp
+  --defsym=__vfscanf=__vfscanf_int
+  --silent
+  --list-all-undefineds
+  --fatal-warnings
+  -EL
+  -mcpu=cortex-m33
+  --gc-sections
+  -TC:/Users/Devan/Documents/SEGGER Embedded Studio for ARM Projects/Executable_1/Setup/SEGGER_RAM.icf
+  -Map
+  Output/Debug External/Exe/Executable_2.map
+  -u_vectors
+  -o
+  Output/Debug External/Exe/Executable_2.elf
+  --emit-relocs
+  --start-group
+  Output/Executable_2 Debug External/Obj/SEGGER_RTT.o
+  Output/Executable_2 Debug External/Obj/SEGGER_RTT_Syscalls_SES.o
+  Output/Executable_2 Debug External/Obj/main.o
+  Output/Executable_2 Debug External/Obj/Cortex_M_Startup.o
+  Output/Executable_2 Debug External/Obj/HardFaultHandler.o
+  Output/Executable_2 Debug External/Obj/SEGGER_HardFaultHandler.o
+  Output/Executable_2 Debug External/Obj/SEGGER_THUMB_Startup.o
+  C:/Program Files/SEGGER/SEGGER Embedded Studio for ARM 4.52c/lib/libdebugio_mempoll_v8mml_t_le_eabi.a
+  C:/Program Files/SEGGER/SEGGER Embedded Studio for ARM 4.52c/lib/libm_v8mml_t_le_eabi.a
+  C:/Program Files/SEGGER/SEGGER Embedded Studio for ARM 4.52c/lib/libc_v8mml_t_le_eabi.a
+  C:/Program Files/SEGGER/SEGGER Embedded Studio for ARM 4.52c/lib/libcpp_v8mml_t_le_eabi.a
+  C:/Program Files/SEGGER/SEGGER Embedded Studio for ARM 4.52c/lib/libdebugio_v8mml_t_le_eabi.a
+  C:/Program Files/SEGGER/SEGGER Embedded Studio for ARM 4.52c/lib/libvfprintf_v8mml_t_le_eabi.o
+  C:/Program Files/SEGGER/SEGGER Embedded Studio for ARM 4.52c/lib/libvfscanf_v8mml_t_le_eabi.o
+  --end-group
+
+
+***************************************************************************************
+***                                                                                 ***
+***                                  LINKER SCRIPT                                  ***
+***                                                                                 ***
+***************************************************************************************
+
+Read linker script from 'C:/Users/Devan/Documents/SEGGER Embedded Studio for ARM Projects/Executable_1/Setup/SEGGER_RAM.icf':
+  
+  /*********************************************************************
+  *                    SEGGER Microcontroller GmbH                     *
+  *                        The Embedded Experts                        *
+  **********************************************************************
+  *                                                                    *
+  *            (c) 2014 - 2020 SEGGER Microcontroller GmbH             *
+  *                                                                    *
+  *           www.segger.com     Support: support@segger.com           *
+  *                                                                    *
+  **********************************************************************
+  *                                                                    *
+  * All rights reserved.                                               *
+  *                                                                    *
+  * Redistribution and use in source and binary forms, with or         *
+  * without modification, are permitted provided that the following    *
+  * conditions are met:                                                *
+  *                                                                    *
+  * - Redistributions of source code must retain the above copyright   *
+  *   notice, this list of conditions and the following disclaimer.    *
+  *                                                                    *
+  * - Neither the name of SEGGER Microcontroller GmbH                  *
+  *   nor the names of its contributors may be used to endorse or      *
+  *   promote products derived from this software without specific     *
+  *   prior written permission.                                        *
+  *                                                                    *
+  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND             *
+  * CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,        *
+  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF           *
+  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE           *
+  * DISCLAIMED.                                                        *
+  * IN NO EVENT SHALL SEGGER Microcontroller GmbH BE LIABLE FOR        *
+  * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR           *
+  * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT  *
+  * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;    *
+  * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF      *
+  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT          *
+  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE  *
+  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH   *
+  * DAMAGE.                                                            *
+  *                                                                    *
+  **********************************************************************
+  */
+  
+  define memory with size = 4G;
+  
+  //
+  // Combined regions per memory type
+  //
+  define region RAM   = RAM1;
+  
+  //
+  // Block definitions
+  //
+  define block ctors                          { section .ctors,     section .ctors.*, block with         alphabetical order { init_array } };
+  define block dtors                          { section .dtors,     section .dtors.*, block with reverse alphabetical order { fini_array } };
+  define block exidx                          { section .ARM.exidx, section .ARM.exidx.* };
+  define block tbss                           { section .tbss,      section .tbss.*  };
+  define block tdata                          { section .tdata,     section .tdata.* };
+  define block tls                            { block tbss, block tdata };
+  define block tdata_load                     { copy of block tdata };
+  define block heap  with size = __HEAPSIZE__,  alignment = 8, /* fill =0x00, */ readwrite access { };
+  define block stack with size = __STACKSIZE__, alignment = 8, /* fill =0xCD, */ readwrite access { };
+  //
+  // Explicit initialization settings for sections
+  //
+  do not initialize                           { section .non_init, section .non_init.*, section .*.non_init, section .*.non_init.* };
+  initialize by copy /* with packing=auto */  { section .data, section .data.*, section .*.data, section .*.data.* };
+  initialize by copy /* with packing=auto */  { section .fast, section .fast.* };
+  
+  //
+  // Explicit placement in RAMn
+  //
+  place in RAM1                               { section .RAM1, section .RAM1.* };
+  
+  //
+  // RAM Placement
+  //
+  place at start of RAM                       { section .vectors };                      // Vector table section
+  place in RAM with minimum size order        { section .init,   section .init.*,        // Init code section
+                                                  section .init_rodata, section .init_rodata.*, // Init read-only section
+                                                  section .text,   section .text.*,        // Code section
+                                                  section .rodata, section .rodata.*,      // Read-only data section
+                                                  section .segger.*,                       // Auto-generated initialization
+                                                  block exidx,                             // ARM exception unwinding block
+                                                  block ctors,                             // Constructors block
+                                                  block dtors };                           // Destructors block
+  place in RAM                                { block tdata_load };                      // Thread-local-storage load image
+  
+  
+  place in RAM                                { section .non_init, section .non_init.*,  // No initialization section
+                                                block tls };                             // Thread-local-storage block
+  place in RAM with auto order                { section .fast, section .fast.*,          // "ramfunc" section
+                                                section .data, section .data.*,          // Initialized data section
+                                                section .bss, section .bss.*
+                                              };          // Static data section
+  place in RAM                                { block heap };           // Heap reserved block
+  place at end of RAM                         { block stack };          // Stack reserved block at the end
+
+
+***************************************************************************************
+***                                                                                 ***
+***                                PLACEMENT SUMMARY                                ***
+***                                                                                 ***
+***************************************************************************************
+
+place at 0x20000000
+
+  Section                  Type  Address       Size  Align  Object
+  -------                  ----  -------       ----  -----  ------
+  .vectors                 Code  20000000      0xc0      2  Cortex_M_Startup.o
+
+place at 0x20080000
+
+  Section                  Type  Address       Size  Align  Object
+  -------                  ----  -------       ----  -----  ------
+
+"<#3> at line 73, col 45": place in [0x20000000 to 0x2007ffff] with auto order
+
+  Section                  Type  Address       Size  Align  Object
+  -------                  ----  -------       ----  -----  ------
+
+"<#5> at line 79, col 45": place in [0x20000000 to 0x2007ffff] with maximum packing
+
+  Section                  Type  Address       Size  Align  Object
+  -------                  ----  -------       ----  -----  ------
+  .text._DoInit            Code  200000c0      0x9c      4  SEGGER_RTT.o
+  .text.SEGGER_RTT_WriteNoLock
+                           Code  2000015c      0xa0      4  SEGGER_RTT.o
+  .text.SEGGER_RTT_Write   Code  200001fc      0x44      4  SEGGER_RTT.o
+  .text.main               Code  20000240      0x2c      4  main.o
+  .text.HardFaultHandler   Code  2000026c      0x34      4  SEGGER_HardFaultHandler.o
+  .text.libc.__vfprintf_int_nwp
+                           Code  200002a0     0x4fc      4  libvfprintf_v8mml_t_le_eabi.o
+  .rodata.libc.__RAL_hex_lc
+                           Cnst  2000079c      0x10      4  libc2.o (libc_v8mml_t_le_eabi.a)
+  .rodata.libc.__RAL_hex_uc
+                           Cnst  200007ac      0x10      4  libc2.o (libc_v8mml_t_le_eabi.a)
+  .init                    Code  200007bc      0x64      4  Cortex_M_Startup.o
+  .init                    Code  20000820      0x64      4  SEGGER_THUMB_Startup.o
+  .text                    Code  20000884      0x18      4  HardFaultHandler.o
+  .segger.init.table       Cnst  200013f0      0x10      4  - Linker created -
+  .rodata                  Cnst  2000089c      0x11      4  main.o
+  .text._WriteBlocking     Code  200008ae      0xb2      2  SEGGER_RTT.o
+  .rodata                  Cnst  20000960      0x17      4  SEGGER_RTT.o
+  .text._WriteNoCheck      Code  20000978      0x7e      2  SEGGER_RTT.o
+  .text.libc.memcpy        Code  200009f6      0x52      2  libc2_asm.o (libc_v8mml_t_le_eabi.a)
+  .segger.init.__SEGGER_init_zero
+                           Code  20001400      0x16      2  SEGGER_THUMB_Startup.o
+  .text._GetAvailWriteSpace
+                           Code  20000a48      0x3c      2  SEGGER_RTT.o
+  .text.printf             Code  20000a84      0x4c      2  SEGGER_RTT_Syscalls_SES.o
+  .text.libc.__putc        Code  20000ad0      0x34      2  libc2.o (libc_v8mml_t_le_eabi.a)
+  .text.libc.vsnprintf     Code  20000b04      0x1c      2  libc2.o (libc_v8mml_t_le_eabi.a)
+  .text.libc.strcpy        Code  20000b20      0x44      2  libc2_asm.o (libc_v8mml_t_le_eabi.a)
+  .rodata.block.tdata.copy
+                           Cnst  200008ad                1  - Linker created -
+
+"<#6> at line 87, col 45": place in [0x20000000 to 0x2007ffff] with auto order
+
+  Section                  Type  Address       Size  Align  Object
+  -------                  ----  -------       ----  -----  ------
+
+"<#7> at line 90, col 45": place in [0x20000000 to 0x2007ffff] with auto order
+
+  Section                  Type  Address       Size  Align  Object
+  -------                  ----  -------       ----  -----  ------
+
+"<#8> at line 92, col 45": place in [0x20000000 to 0x2007ffff] with auto order
+
+  Section                  Type  Address       Size  Align  Object
+  -------                  ----  -------       ----  -----  ------
+  .bss._acUpBuffer         Zero  20000b64     0x400      4  SEGGER_RTT.o
+  .bss._SEGGER_RTT         Zero  20000f64      0x78      4  SEGGER_RTT.o
+  .bss._acDownBuffer       Zero  20000fdc      0x10      4  SEGGER_RTT.o
+  .bss.libc.__user_format_extender
+                           Zero  20000fec       0x4      4  libc2.o (libc_v8mml_t_le_eabi.a)
+
+"<#9> at line 96, col 45": place in [0x20000000 to 0x2007ffff] with auto order
+
+  Section                  Type  Address       Size  Align  Object
+  -------                  ----  -------       ----  -----  ------
+
+
+***************************************************************************************
+***                                                                                 ***
+***                              INITIALIZATION TABLE                               ***
+***                                                                                 ***
+***************************************************************************************
+
+Zero (__SEGGER_init_zero)
+    1 destination range, total size 0x48c
+          [0x20000b64 to 0x20000fef]
+    4 initialized sections:
+          [0x20000b64 to 0x20000f63]  section .bss._acUpBuffer from SEGGER_RTT.o, align=4
+          [0x20000f64 to 0x20000fdb]  section .bss._SEGGER_RTT from SEGGER_RTT.o, align=4
+          [0x20000fdc to 0x20000feb]  section .bss._acDownBuffer from SEGGER_RTT.o, align=4
+          [0x20000fec to 0x20000fef]  section .bss.libc.__user_format_extender from libc2.o (libc_v8mml_t_le_eabi.a), align=4
+
+Totals:
+    Initialization table:     0x10 bytes
+    Source image:                0 bytes
+    Destination image:           0 bytes
+
+
+***************************************************************************************
+***                                                                                 ***
+***                                 MODULE SUMMARY                                  ***
+***                                                                                 ***
+***************************************************************************************
+
+                                            Object      Code  RO Data  RW Data  ZI Data
+---------------------------------------------------------------------------------------
+                                Cortex_M_Startup.o       292                            
+                                HardFaultHandler.o        24                            
+                         SEGGER_HardFaultHandler.o        52                            
+                                      SEGGER_RTT.o       748       23              1160 
+                         SEGGER_RTT_Syscalls_SES.o        76                            
+                            SEGGER_THUMB_Startup.o       122                            
+                  libc2.o (libc_v8mml_t_le_eabi.a)        80       32                 4 
+              libc2_asm.o (libc_v8mml_t_le_eabi.a)       150                            
+                     libvfprintf_v8mml_t_le_eabi.o      1276                            
+                                            main.o        44       17                   
+                                                    ===================================
+                                            Total:      2864       72        0     1164
+                                                    ===================================
+
+
+***************************************************************************************
+***                                                                                 ***
+***                                   SYMBOL LIST                                   ***
+***                                                                                 ***
+***************************************************************************************
+
+Symbols by value
+
+  Symbol                   Value         Size  Align  Type      Object
+  ------                   -----         ----  -----  ----      ------
+  dtors$$Length            00000000                   ----  Gb  - Linker created -
+  __dtors_size__           00000000                   ----  Gb  - Linker created -
+  __STACKSIZE_PROCESS__    00000000                   ----  Gb  - Linker created -
+  __dtors_size             00000000                   ----  Gb  - Linker created -
+  __tbss_size__            00000000                   ----  Gb  - Linker created -
+  tdata_load$$Length       00000000                   ----  Gb  - Linker created -
+  __tdata_load_size__      00000000                   ----  Gb  - Linker created -
+  __tls_size__             00000000                   ----  Gb  - Linker created -
+  __tdata_load_size        00000000                   ----  Gb  - Linker created -
+  __tbss_size              00000000                   ----  Gb  - Linker created -
+  exidx$$Length            00000000                   ----  Gb  - Linker created -
+  ctors$$Length            00000000                   ----  Gb  - Linker created -
+  __ctors_size__           00000000                   ----  Gb  - Linker created -
+  __tdata_size             00000000                   ----  Gb  - Linker created -
+  __ctors_size             00000000                   ----  Gb  - Linker created -
+  tbss$$Length             00000000                   ----  Gb  - Linker created -
+  __exidx_size             00000000                   ----  Gb  - Linker created -
+  __tdata_size__           00000000                   ----  Gb  - Linker created -
+  tls$$Length              00000000                   ----  Gb  - Linker created -
+  __exidx_size__           00000000                   ----  Gb  - Linker created -
+  tdata$$Length            00000000                   ----  Gb  - Linker created -
+  __tls_size               00000000                   ----  Gb  - Linker created -
+  __FLASH1_segment_used_size__
+                           00000000                   ----  Gb  - Linker created -
+  __HEAPSIZE__             00000400                   ----  Gb  - Linker created -
+  __STACKSIZE__            00000400                   ----  Gb  - Linker created -
+  stack$$Length            00000400                   ----  Gb  - Linker created -
+  __stack_size__           00000400                   ----  Gb  - Linker created -
+  __stack_size             00000400                   ----  Gb  - Linker created -
+  heap$$Length             00000400                   ----  Gb  - Linker created -
+  __heap_size              00000400                   ----  Gb  - Linker created -
+  __heap_size__            00000400                   ----  Gb  - Linker created -
+  __FLASH1_segment_size__  00001000                   ----  Gb  - Linker created -
+  __RAM_segment_size__     00080000                   ----  Gb  - Linker created -
+  __RAM1_segment_used_size__
+                           00080000                   ----  Gb  - Linker created -
+  __RAM1_segment_size__    00080000                   ----  Gb  - Linker created -
+  __RAM_segment_used_size__
+                           00080000                   ----  Gb  - Linker created -
+  __FLASH1_segment_used_start__
+                           00ff8000                   ----  Gb  - Linker created -
+  __FLASH1_segment_start__
+                           00ff8000                   ----  Gb  - Linker created -
+  __FLASH1_segment_used_end__
+                           00ff8000                   ----  Gb  - Linker created -
+  __FLASH1_segment_end__   00ff9000                   ----  Gb  - Linker created -
+  _vectors                 20000000      0xc0      2  Code  Gb  Cortex_M_Startup.o
+  __RAM_segment_start__    20000000                   ----  Gb  - Linker created -
+  __RAM1_segment_start__   20000000                   ----  Gb  - Linker created -
+  __RAM_segment_used_start__
+                           20000000                   ----  Gb  - Linker created -
+  __RAM1_segment_used_start__
+                           20000000                   ----  Gb  - Linker created -
+  _vectors_end             200000c0      0xc0      2  Code  Lc  Cortex_M_Startup.o
+  _DoInit                  200000c1      0x9c      4  Code  Lc  SEGGER_RTT.o
+  SEGGER_RTT_WriteNoLock   2000015d      0xa0      4  Code  Gb  SEGGER_RTT.o
+  SEGGER_RTT_Write         200001fd      0x44      4  Code  Gb  SEGGER_RTT.o
+  main                     20000241      0x2c      4  Code  Gb  main.o
+  HardFaultHandler         2000026d      0x34      4  Code  Gb  SEGGER_HardFaultHandler.o
+  __vfprintf_int_nwp       200002a1     0x4fc      4  Code  Gb  libvfprintf_v8mml_t_le_eabi.o
+  __vfprintf               200002a1     0x4fc      4  Code  Gb  libvfprintf_v8mml_t_le_eabi.o
+  __RAL_hex_lc             2000079c      0x10      4  Cnst  Gb  libc2.o (libc_v8mml_t_le_eabi.a)
+  __RAL_hex_uc             200007ac      0x10      4  Cnst  Gb  libc2.o (libc_v8mml_t_le_eabi.a)
+  NMI_Handler              200007bd      0x64      4  Code  Wk  Cortex_M_Startup.o
+  HardFault_Handler        200007bf      0x64      4  Code  Wk  Cortex_M_Startup.o
+  MemManage_Handler        200007c1      0x64      4  Code  Wk  Cortex_M_Startup.o
+  BusFault_Handler         200007c3      0x64      4  Code  Wk  Cortex_M_Startup.o
+  UsageFault_Handler       200007c5      0x64      4  Code  Wk  Cortex_M_Startup.o
+  SVC_Handler              200007c7      0x64      4  Code  Wk  Cortex_M_Startup.o
+  DebugMon_Handler         200007c9      0x64      4  Code  Wk  Cortex_M_Startup.o
+  PendSV_Handler           200007cb      0x64      4  Code  Wk  Cortex_M_Startup.o
+  SysTick_Handler          200007cd      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR0             200007cf      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR1             200007d1      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR2             200007d3      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR3             200007d5      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR4             200007d7      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR5             200007d9      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR6             200007db      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR7             200007dd      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR8             200007df      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR9             200007e1      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR10            200007e3      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR11            200007e5      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR12            200007e7      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR13            200007e9      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR14            200007eb      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR15            200007ed      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR16            200007ef      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR17            200007f1      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR18            200007f3      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR19            200007f5      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR20            200007f7      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR21            200007f9      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR22            200007fb      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR23            200007fd      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR24            200007ff      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR25            20000801      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR26            20000803      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR27            20000805      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR28            20000807      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR29            20000809      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR30            2000080b      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR31            2000080d      0x64      4  Code  Wk  Cortex_M_Startup.o
+  Reset_Handler            2000080f      0x64      4  Code  Gb  Cortex_M_Startup.o
+  reset_handler            2000080f      0x64      4  Code  Gb  Cortex_M_Startup.o
+  SystemInit               2000081b      0x64      4  Code  Wk  Cortex_M_Startup.o
+  _start                   20000821      0x64      4  Code  Gb  SEGGER_THUMB_Startup.o
+  ctor_loop                20000848      0x64      4  Code  Lc  SEGGER_THUMB_Startup.o
+  ctor_end                 20000858      0x64      4  Code  Lc  SEGGER_THUMB_Startup.o
+  start                    2000085f      0x64      4  Code  Lc  SEGGER_THUMB_Startup.o
+  exit_loop                20000866      0x64      4  Code  Lc  SEGGER_THUMB_Startup.o
+  exit                     20000867      0x64      4  Code  Wk  SEGGER_THUMB_Startup.o
+  HardFault_Handler        20000885      0x18      4  Code  Gb  HardFaultHandler.o
+  __dtors_end__            200008ad                   ----  Gb  - Linker created -
+  exidx$$Limit             200008ad                   ----  Gb  - Linker created -
+  __dtors_start__          200008ad                   ----  Gb  - Linker created -
+  dtors$$Base              200008ad                   ----  Gb  - Linker created -
+  dtors$$Limit             200008ad                   ----  Gb  - Linker created -
+  __dtors_start            200008ad                   ----  Gb  - Linker created -
+  __dtors_end              200008ad                   ----  Gb  - Linker created -
+  exidx$$Base              200008ad                   ----  Gb  - Linker created -
+  tdata_load$$Base         200008ad                   ----  Gb  - Linker created -
+  __tdata_load_end__       200008ad                   ----  Gb  - Linker created -
+  __exidx_start__          200008ad                   ----  Gb  - Linker created -
+  tbss$$Base               200008ad                   ----  Gb  - Linker created -
+  __ctors_end__            200008ad                   ----  Gb  - Linker created -
+  __tdata_load_start       200008ad                   ----  Gb  - Linker created -
+  __tls_end__              200008ad                   ----  Gb  - Linker created -
+  ctors$$Base              200008ad                   ----  Gb  - Linker created -
+  __tbss_end               200008ad                   ----  Gb  - Linker created -
+  __exidx_start            200008ad                   ----  Gb  - Linker created -
+  ctors$$Limit             200008ad                   ----  Gb  - Linker created -
+  __tdata_load_end         200008ad                   ----  Gb  - Linker created -
+  __ctors_start__          200008ad                   ----  Gb  - Linker created -
+  __tdata_end__            200008ad                   ----  Gb  - Linker created -
+  tdata_load$$Limit        200008ad                   ----  Gb  - Linker created -
+  __tdata_end              200008ad                   ----  Gb  - Linker created -
+  __tbss_start             200008ad                   ----  Gb  - Linker created -
+  __tbss_start__           200008ad                   ----  Gb  - Linker created -
+  __ctors_start            200008ad                   ----  Gb  - Linker created -
+  __tdata_start__          200008ad                   ----  Gb  - Linker created -
+  __tdata_load_start__     200008ad                   ----  Gb  - Linker created -
+  tbss$$Limit              200008ad                   ----  Gb  - Linker created -
+  __tdata_start            200008ad                   ----  Gb  - Linker created -
+  __exidx_end__            200008ad                   ----  Gb  - Linker created -
+  __tbss_end__             200008ad                   ----  Gb  - Linker created -
+  tdata$$Base              200008ad                   ----  Gb  - Linker created -
+  tls$$Base                200008ad                   ----  Gb  - Linker created -
+  __exidx_end              200008ad                   ----  Gb  - Linker created -
+  tdata$$Limit             200008ad                   ----  Gb  - Linker created -
+  tls$$Limit               200008ad                   ----  Gb  - Linker created -
+  __ctors_end              200008ad                   ----  Gb  - Linker created -
+  __tls_start__            200008ad                   ----  Gb  - Linker created -
+  __tls_start              200008ad                   ----  Gb  - Linker created -
+  __tls_end                200008ad                   ----  Gb  - Linker created -
+  _WriteBlocking           200008af      0xb2      2  Code  Lc  SEGGER_RTT.o
+  _WriteNoCheck            20000979      0x7e      2  Code  Lc  SEGGER_RTT.o
+  __aeabi_memcpy           200009f7      0x52      2  Code  Wk  libc2_asm.o (libc_v8mml_t_le_eabi.a)
+  memcpy                   200009f7      0x52      2  Code  Wk  libc2_asm.o (libc_v8mml_t_le_eabi.a)
+  __aeabi_memcpy4          20000a03      0x52      2  Code  Wk  libc2_asm.o (libc_v8mml_t_le_eabi.a)
+  __aeabi_memcpy8          20000a03      0x52      2  Code  Wk  libc2_asm.o (libc_v8mml_t_le_eabi.a)
+  _GetAvailWriteSpace      20000a49      0x3c      2  Code  Lc  SEGGER_RTT.o
+  printf                   20000a85      0x4c      2  Code  Gb  SEGGER_RTT_Syscalls_SES.o
+  __putc                   20000ad1      0x34      2  Code  Gb  libc2.o (libc_v8mml_t_le_eabi.a)
+  vsnprintf                20000b05      0x1c      2  Code  Wk  libc2.o (libc_v8mml_t_le_eabi.a)
+  strcpy                   20000b21      0x44      2  Code  Wk  libc2_asm.o (libc_v8mml_t_le_eabi.a)
+  _acUpBuffer              20000b64     0x400      4  Data  Lc  SEGGER_RTT.o
+  _SEGGER_RTT              20000f64      0x78      4  Data  Gb  SEGGER_RTT.o
+  _acDownBuffer            20000fdc      0x10      4  Data  Lc  SEGGER_RTT.o
+  __user_format_extender   20000fec       0x4      4  Data  Gb  libc2.o (libc_v8mml_t_le_eabi.a)
+  heap$$Base               20000ff0                   ----  Gb  - Linker created -
+  __heap_start__           20000ff0                   ----  Gb  - Linker created -
+  __heap_start             20000ff0                   ----  Gb  - Linker created -
+  heap$$Limit              200013f0                   ----  Gb  - Linker created -
+  __heap_end               200013f0                   ----  Gb  - Linker created -
+  __SEGGER_init_table__    200013f0      0x10      4  Cnst  Lc  - Linker created -
+  __heap_end__             200013f0                   ----  Gb  - Linker created -
+  __SEGGER_init_zero       20001401      0x16      2  Code  Gb  SEGGER_THUMB_Startup.o
+  __stack_start__          2007fc00                   ----  Gb  - Linker created -
+  stack$$Base              2007fc00                   ----  Gb  - Linker created -
+  __stack_start            2007fc00                   ----  Gb  - Linker created -
+  stack$$Limit             20080000                   ----  Gb  - Linker created -
+  __stack_end__            20080000                   ----  Gb  - Linker created -
+  __stack_end              20080000                   ----  Gb  - Linker created -
+  __RAM1_segment_end__     20080000                   ----  Gb  - Linker created -
+  __RAM1_segment_used_end__
+                           20080000                   ----  Gb  - Linker created -
+  __RAM_segment_used_end__
+                           20080000                   ----  Gb  - Linker created -
+  __RAM_segment_end__      20080000                   ----  Gb  - Linker created -
+
+Symbols by name
+
+  Symbol                   Value         Size  Align  Type      Object
+  ------                   -----         ----  -----  ----      ------
+  BusFault_Handler         200007c3      0x64      4  Code  Wk  Cortex_M_Startup.o
+  DebugMon_Handler         200007c9      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR0             200007cf      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR1             200007d1      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR10            200007e3      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR11            200007e5      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR12            200007e7      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR13            200007e9      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR14            200007eb      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR15            200007ed      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR16            200007ef      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR17            200007f1      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR18            200007f3      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR19            200007f5      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR2             200007d3      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR20            200007f7      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR21            200007f9      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR22            200007fb      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR23            200007fd      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR24            200007ff      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR25            20000801      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR26            20000803      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR27            20000805      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR28            20000807      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR29            20000809      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR3             200007d5      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR30            2000080b      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR31            2000080d      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR4             200007d7      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR5             200007d9      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR6             200007db      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR7             200007dd      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR8             200007df      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR9             200007e1      0x64      4  Code  Wk  Cortex_M_Startup.o
+  HardFaultHandler         2000026d      0x34      4  Code  Gb  SEGGER_HardFaultHandler.o
+  HardFault_Handler        200007bf      0x64      4  Code  Wk  Cortex_M_Startup.o
+  HardFault_Handler        20000885      0x18      4  Code  Gb  HardFaultHandler.o
+  MemManage_Handler        200007c1      0x64      4  Code  Wk  Cortex_M_Startup.o
+  NMI_Handler              200007bd      0x64      4  Code  Wk  Cortex_M_Startup.o
+  PendSV_Handler           200007cb      0x64      4  Code  Wk  Cortex_M_Startup.o
+  Reset_Handler            2000080f      0x64      4  Code  Gb  Cortex_M_Startup.o
+  SEGGER_RTT_Write         200001fd      0x44      4  Code  Gb  SEGGER_RTT.o
+  SEGGER_RTT_WriteNoLock   2000015d      0xa0      4  Code  Gb  SEGGER_RTT.o
+  SVC_Handler              200007c7      0x64      4  Code  Wk  Cortex_M_Startup.o
+  SysTick_Handler          200007cd      0x64      4  Code  Wk  Cortex_M_Startup.o
+  SystemInit               2000081b      0x64      4  Code  Wk  Cortex_M_Startup.o
+  UsageFault_Handler       200007c5      0x64      4  Code  Wk  Cortex_M_Startup.o
+  _DoInit                  200000c1      0x9c      4  Code  Lc  SEGGER_RTT.o
+  _GetAvailWriteSpace      20000a49      0x3c      2  Code  Lc  SEGGER_RTT.o
+  _SEGGER_RTT              20000f64      0x78      4  Data  Gb  SEGGER_RTT.o
+  _WriteBlocking           200008af      0xb2      2  Code  Lc  SEGGER_RTT.o
+  _WriteNoCheck            20000979      0x7e      2  Code  Lc  SEGGER_RTT.o
+  __FLASH1_segment_end__   00ff9000                   ----  Gb  - Linker created -
+  __FLASH1_segment_size__  00001000                   ----  Gb  - Linker created -
+  __FLASH1_segment_start__
+                           00ff8000                   ----  Gb  - Linker created -
+  __FLASH1_segment_used_end__
+                           00ff8000                   ----  Gb  - Linker created -
+  __FLASH1_segment_used_size__
+                           00000000                   ----  Gb  - Linker created -
+  __FLASH1_segment_used_start__
+                           00ff8000                   ----  Gb  - Linker created -
+  __HEAPSIZE__             00000400                   ----  Gb  - Linker created -
+  __RAL_hex_lc             2000079c      0x10      4  Cnst  Gb  libc2.o (libc_v8mml_t_le_eabi.a)
+  __RAL_hex_uc             200007ac      0x10      4  Cnst  Gb  libc2.o (libc_v8mml_t_le_eabi.a)
+  __RAM1_segment_end__     20080000                   ----  Gb  - Linker created -
+  __RAM1_segment_size__    00080000                   ----  Gb  - Linker created -
+  __RAM1_segment_start__   20000000                   ----  Gb  - Linker created -
+  __RAM1_segment_used_end__
+                           20080000                   ----  Gb  - Linker created -
+  __RAM1_segment_used_size__
+                           00080000                   ----  Gb  - Linker created -
+  __RAM1_segment_used_start__
+                           20000000                   ----  Gb  - Linker created -
+  __RAM_segment_end__      20080000                   ----  Gb  - Linker created -
+  __RAM_segment_size__     00080000                   ----  Gb  - Linker created -
+  __RAM_segment_start__    20000000                   ----  Gb  - Linker created -
+  __RAM_segment_used_end__
+                           20080000                   ----  Gb  - Linker created -
+  __RAM_segment_used_size__
+                           00080000                   ----  Gb  - Linker created -
+  __RAM_segment_used_start__
+                           20000000                   ----  Gb  - Linker created -
+  __SEGGER_init_table__    200013f0      0x10      4  Cnst  Lc  - Linker created -
+  __SEGGER_init_zero       20001401      0x16      2  Code  Gb  SEGGER_THUMB_Startup.o
+  __STACKSIZE_PROCESS__    00000000                   ----  Gb  - Linker created -
+  __STACKSIZE__            00000400                   ----  Gb  - Linker created -
+  __aeabi_memcpy           200009f7      0x52      2  Code  Wk  libc2_asm.o (libc_v8mml_t_le_eabi.a)
+  __aeabi_memcpy4          20000a03      0x52      2  Code  Wk  libc2_asm.o (libc_v8mml_t_le_eabi.a)
+  __aeabi_memcpy8          20000a03      0x52      2  Code  Wk  libc2_asm.o (libc_v8mml_t_le_eabi.a)
+  __ctors_end              200008ad                   ----  Gb  - Linker created -
+  __ctors_end__            200008ad                   ----  Gb  - Linker created -
+  __ctors_size             00000000                   ----  Gb  - Linker created -
+  __ctors_size__           00000000                   ----  Gb  - Linker created -
+  __ctors_start            200008ad                   ----  Gb  - Linker created -
+  __ctors_start__          200008ad                   ----  Gb  - Linker created -
+  __dtors_end              200008ad                   ----  Gb  - Linker created -
+  __dtors_end__            200008ad                   ----  Gb  - Linker created -
+  __dtors_size             00000000                   ----  Gb  - Linker created -
+  __dtors_size__           00000000                   ----  Gb  - Linker created -
+  __dtors_start            200008ad                   ----  Gb  - Linker created -
+  __dtors_start__          200008ad                   ----  Gb  - Linker created -
+  __exidx_end              200008ad                   ----  Gb  - Linker created -
+  __exidx_end__            200008ad                   ----  Gb  - Linker created -
+  __exidx_size             00000000                   ----  Gb  - Linker created -
+  __exidx_size__           00000000                   ----  Gb  - Linker created -
+  __exidx_start            200008ad                   ----  Gb  - Linker created -
+  __exidx_start__          200008ad                   ----  Gb  - Linker created -
+  __heap_end               200013f0                   ----  Gb  - Linker created -
+  __heap_end__             200013f0                   ----  Gb  - Linker created -
+  __heap_size              00000400                   ----  Gb  - Linker created -
+  __heap_size__            00000400                   ----  Gb  - Linker created -
+  __heap_start             20000ff0                   ----  Gb  - Linker created -
+  __heap_start__           20000ff0                   ----  Gb  - Linker created -
+  __putc                   20000ad1      0x34      2  Code  Gb  libc2.o (libc_v8mml_t_le_eabi.a)
+  __stack_end              20080000                   ----  Gb  - Linker created -
+  __stack_end__            20080000                   ----  Gb  - Linker created -
+  __stack_size             00000400                   ----  Gb  - Linker created -
+  __stack_size__           00000400                   ----  Gb  - Linker created -
+  __stack_start            2007fc00                   ----  Gb  - Linker created -
+  __stack_start__          2007fc00                   ----  Gb  - Linker created -
+  __tbss_end               200008ad                   ----  Gb  - Linker created -
+  __tbss_end__             200008ad                   ----  Gb  - Linker created -
+  __tbss_size              00000000                   ----  Gb  - Linker created -
+  __tbss_size__            00000000                   ----  Gb  - Linker created -
+  __tbss_start             200008ad                   ----  Gb  - Linker created -
+  __tbss_start__           200008ad                   ----  Gb  - Linker created -
+  __tdata_end              200008ad                   ----  Gb  - Linker created -
+  __tdata_end__            200008ad                   ----  Gb  - Linker created -
+  __tdata_load_end         200008ad                   ----  Gb  - Linker created -
+  __tdata_load_end__       200008ad                   ----  Gb  - Linker created -
+  __tdata_load_size        00000000                   ----  Gb  - Linker created -
+  __tdata_load_size__      00000000                   ----  Gb  - Linker created -
+  __tdata_load_start       200008ad                   ----  Gb  - Linker created -
+  __tdata_load_start__     200008ad                   ----  Gb  - Linker created -
+  __tdata_size             00000000                   ----  Gb  - Linker created -
+  __tdata_size__           00000000                   ----  Gb  - Linker created -
+  __tdata_start            200008ad                   ----  Gb  - Linker created -
+  __tdata_start__          200008ad                   ----  Gb  - Linker created -
+  __tls_end                200008ad                   ----  Gb  - Linker created -
+  __tls_end__              200008ad                   ----  Gb  - Linker created -
+  __tls_size               00000000                   ----  Gb  - Linker created -
+  __tls_size__             00000000                   ----  Gb  - Linker created -
+  __tls_start              200008ad                   ----  Gb  - Linker created -
+  __tls_start__            200008ad                   ----  Gb  - Linker created -
+  __user_format_extender   20000fec       0x4      4  Data  Gb  libc2.o (libc_v8mml_t_le_eabi.a)
+  __vfprintf               200002a1     0x4fc      4  Code  Gb  libvfprintf_v8mml_t_le_eabi.o
+  __vfprintf_int_nwp       200002a1     0x4fc      4  Code  Gb  libvfprintf_v8mml_t_le_eabi.o
+  _acDownBuffer            20000fdc      0x10      4  Data  Lc  SEGGER_RTT.o
+  _acUpBuffer              20000b64     0x400      4  Data  Lc  SEGGER_RTT.o
+  _start                   20000821      0x64      4  Code  Gb  SEGGER_THUMB_Startup.o
+  _vectors                 20000000      0xc0      2  Code  Gb  Cortex_M_Startup.o
+  _vectors_end             200000c0      0xc0      2  Code  Lc  Cortex_M_Startup.o
+  ctor_end                 20000858      0x64      4  Code  Lc  SEGGER_THUMB_Startup.o
+  ctor_loop                20000848      0x64      4  Code  Lc  SEGGER_THUMB_Startup.o
+  ctors$$Base              200008ad                   ----  Gb  - Linker created -
+  ctors$$Length            00000000                   ----  Gb  - Linker created -
+  ctors$$Limit             200008ad                   ----  Gb  - Linker created -
+  dtors$$Base              200008ad                   ----  Gb  - Linker created -
+  dtors$$Length            00000000                   ----  Gb  - Linker created -
+  dtors$$Limit             200008ad                   ----  Gb  - Linker created -
+  exidx$$Base              200008ad                   ----  Gb  - Linker created -
+  exidx$$Length            00000000                   ----  Gb  - Linker created -
+  exidx$$Limit             200008ad                   ----  Gb  - Linker created -
+  exit                     20000867      0x64      4  Code  Wk  SEGGER_THUMB_Startup.o
+  exit_loop                20000866      0x64      4  Code  Lc  SEGGER_THUMB_Startup.o
+  heap$$Base               20000ff0                   ----  Gb  - Linker created -
+  heap$$Length             00000400                   ----  Gb  - Linker created -
+  heap$$Limit              200013f0                   ----  Gb  - Linker created -
+  main                     20000241      0x2c      4  Code  Gb  main.o
+  memcpy                   200009f7      0x52      2  Code  Wk  libc2_asm.o (libc_v8mml_t_le_eabi.a)
+  printf                   20000a85      0x4c      2  Code  Gb  SEGGER_RTT_Syscalls_SES.o
+  reset_handler            2000080f      0x64      4  Code  Gb  Cortex_M_Startup.o
+  stack$$Base              2007fc00                   ----  Gb  - Linker created -
+  stack$$Length            00000400                   ----  Gb  - Linker created -
+  stack$$Limit             20080000                   ----  Gb  - Linker created -
+  start                    2000085f      0x64      4  Code  Lc  SEGGER_THUMB_Startup.o
+  strcpy                   20000b21      0x44      2  Code  Wk  libc2_asm.o (libc_v8mml_t_le_eabi.a)
+  tbss$$Base               200008ad                   ----  Gb  - Linker created -
+  tbss$$Length             00000000                   ----  Gb  - Linker created -
+  tbss$$Limit              200008ad                   ----  Gb  - Linker created -
+  tdata$$Base              200008ad                   ----  Gb  - Linker created -
+  tdata$$Length            00000000                   ----  Gb  - Linker created -
+  tdata$$Limit             200008ad                   ----  Gb  - Linker created -
+  tdata_load$$Base         200008ad                   ----  Gb  - Linker created -
+  tdata_load$$Length       00000000                   ----  Gb  - Linker created -
+  tdata_load$$Limit        200008ad                   ----  Gb  - Linker created -
+  tls$$Base                200008ad                   ----  Gb  - Linker created -
+  tls$$Length              00000000                   ----  Gb  - Linker created -
+  tls$$Limit               200008ad                   ----  Gb  - Linker created -
+  vsnprintf                20000b05      0x1c      2  Code  Wk  libc2.o (libc_v8mml_t_le_eabi.a)
+
+Symbols by file then by name
+
+  Symbol                   Value         Size  Align  Type      Object
+  ------                   -----         ----  -----  ----      ------
+  __FLASH1_segment_end__   00ff9000                   ----  Gb  - Linker created -
+  __FLASH1_segment_size__  00001000                   ----  Gb  - Linker created -
+  __FLASH1_segment_start__
+                           00ff8000                   ----  Gb  - Linker created -
+  __FLASH1_segment_used_end__
+                           00ff8000                   ----  Gb  - Linker created -
+  __FLASH1_segment_used_size__
+                           00000000                   ----  Gb  - Linker created -
+  __FLASH1_segment_used_start__
+                           00ff8000                   ----  Gb  - Linker created -
+  __HEAPSIZE__             00000400                   ----  Gb  - Linker created -
+  __RAM1_segment_end__     20080000                   ----  Gb  - Linker created -
+  __RAM1_segment_size__    00080000                   ----  Gb  - Linker created -
+  __RAM1_segment_start__   20000000                   ----  Gb  - Linker created -
+  __RAM1_segment_used_end__
+                           20080000                   ----  Gb  - Linker created -
+  __RAM1_segment_used_size__
+                           00080000                   ----  Gb  - Linker created -
+  __RAM1_segment_used_start__
+                           20000000                   ----  Gb  - Linker created -
+  __RAM_segment_end__      20080000                   ----  Gb  - Linker created -
+  __RAM_segment_size__     00080000                   ----  Gb  - Linker created -
+  __RAM_segment_start__    20000000                   ----  Gb  - Linker created -
+  __RAM_segment_used_end__
+                           20080000                   ----  Gb  - Linker created -
+  __RAM_segment_used_size__
+                           00080000                   ----  Gb  - Linker created -
+  __RAM_segment_used_start__
+                           20000000                   ----  Gb  - Linker created -
+  __SEGGER_init_table__    200013f0      0x10      4  Cnst  Lc  - Linker created -
+  __STACKSIZE_PROCESS__    00000000                   ----  Gb  - Linker created -
+  __STACKSIZE__            00000400                   ----  Gb  - Linker created -
+  __ctors_end              200008ad                   ----  Gb  - Linker created -
+  __ctors_end__            200008ad                   ----  Gb  - Linker created -
+  __ctors_size             00000000                   ----  Gb  - Linker created -
+  __ctors_size__           00000000                   ----  Gb  - Linker created -
+  __ctors_start            200008ad                   ----  Gb  - Linker created -
+  __ctors_start__          200008ad                   ----  Gb  - Linker created -
+  __dtors_end              200008ad                   ----  Gb  - Linker created -
+  __dtors_end__            200008ad                   ----  Gb  - Linker created -
+  __dtors_size             00000000                   ----  Gb  - Linker created -
+  __dtors_size__           00000000                   ----  Gb  - Linker created -
+  __dtors_start            200008ad                   ----  Gb  - Linker created -
+  __dtors_start__          200008ad                   ----  Gb  - Linker created -
+  __exidx_end              200008ad                   ----  Gb  - Linker created -
+  __exidx_end__            200008ad                   ----  Gb  - Linker created -
+  __exidx_size             00000000                   ----  Gb  - Linker created -
+  __exidx_size__           00000000                   ----  Gb  - Linker created -
+  __exidx_start            200008ad                   ----  Gb  - Linker created -
+  __exidx_start__          200008ad                   ----  Gb  - Linker created -
+  __heap_end               200013f0                   ----  Gb  - Linker created -
+  __heap_end__             200013f0                   ----  Gb  - Linker created -
+  __heap_size              00000400                   ----  Gb  - Linker created -
+  __heap_size__            00000400                   ----  Gb  - Linker created -
+  __heap_start             20000ff0                   ----  Gb  - Linker created -
+  __heap_start__           20000ff0                   ----  Gb  - Linker created -
+  __stack_end              20080000                   ----  Gb  - Linker created -
+  __stack_end__            20080000                   ----  Gb  - Linker created -
+  __stack_size             00000400                   ----  Gb  - Linker created -
+  __stack_size__           00000400                   ----  Gb  - Linker created -
+  __stack_start            2007fc00                   ----  Gb  - Linker created -
+  __stack_start__          2007fc00                   ----  Gb  - Linker created -
+  __tbss_end               200008ad                   ----  Gb  - Linker created -
+  __tbss_end__             200008ad                   ----  Gb  - Linker created -
+  __tbss_size              00000000                   ----  Gb  - Linker created -
+  __tbss_size__            00000000                   ----  Gb  - Linker created -
+  __tbss_start             200008ad                   ----  Gb  - Linker created -
+  __tbss_start__           200008ad                   ----  Gb  - Linker created -
+  __tdata_end              200008ad                   ----  Gb  - Linker created -
+  __tdata_end__            200008ad                   ----  Gb  - Linker created -
+  __tdata_load_end         200008ad                   ----  Gb  - Linker created -
+  __tdata_load_end__       200008ad                   ----  Gb  - Linker created -
+  __tdata_load_size        00000000                   ----  Gb  - Linker created -
+  __tdata_load_size__      00000000                   ----  Gb  - Linker created -
+  __tdata_load_start       200008ad                   ----  Gb  - Linker created -
+  __tdata_load_start__     200008ad                   ----  Gb  - Linker created -
+  __tdata_size             00000000                   ----  Gb  - Linker created -
+  __tdata_size__           00000000                   ----  Gb  - Linker created -
+  __tdata_start            200008ad                   ----  Gb  - Linker created -
+  __tdata_start__          200008ad                   ----  Gb  - Linker created -
+  __tls_end                200008ad                   ----  Gb  - Linker created -
+  __tls_end__              200008ad                   ----  Gb  - Linker created -
+  __tls_size               00000000                   ----  Gb  - Linker created -
+  __tls_size__             00000000                   ----  Gb  - Linker created -
+  __tls_start              200008ad                   ----  Gb  - Linker created -
+  __tls_start__            200008ad                   ----  Gb  - Linker created -
+  ctors$$Base              200008ad                   ----  Gb  - Linker created -
+  ctors$$Length            00000000                   ----  Gb  - Linker created -
+  ctors$$Limit             200008ad                   ----  Gb  - Linker created -
+  dtors$$Base              200008ad                   ----  Gb  - Linker created -
+  dtors$$Length            00000000                   ----  Gb  - Linker created -
+  dtors$$Limit             200008ad                   ----  Gb  - Linker created -
+  exidx$$Base              200008ad                   ----  Gb  - Linker created -
+  exidx$$Length            00000000                   ----  Gb  - Linker created -
+  exidx$$Limit             200008ad                   ----  Gb  - Linker created -
+  heap$$Base               20000ff0                   ----  Gb  - Linker created -
+  heap$$Length             00000400                   ----  Gb  - Linker created -
+  heap$$Limit              200013f0                   ----  Gb  - Linker created -
+  stack$$Base              2007fc00                   ----  Gb  - Linker created -
+  stack$$Length            00000400                   ----  Gb  - Linker created -
+  stack$$Limit             20080000                   ----  Gb  - Linker created -
+  tbss$$Base               200008ad                   ----  Gb  - Linker created -
+  tbss$$Length             00000000                   ----  Gb  - Linker created -
+  tbss$$Limit              200008ad                   ----  Gb  - Linker created -
+  tdata$$Base              200008ad                   ----  Gb  - Linker created -
+  tdata$$Length            00000000                   ----  Gb  - Linker created -
+  tdata$$Limit             200008ad                   ----  Gb  - Linker created -
+  tdata_load$$Base         200008ad                   ----  Gb  - Linker created -
+  tdata_load$$Length       00000000                   ----  Gb  - Linker created -
+  tdata_load$$Limit        200008ad                   ----  Gb  - Linker created -
+  tls$$Base                200008ad                   ----  Gb  - Linker created -
+  tls$$Length              00000000                   ----  Gb  - Linker created -
+  tls$$Limit               200008ad                   ----  Gb  - Linker created -
+  BusFault_Handler         200007c3      0x64      4  Code  Wk  Cortex_M_Startup.o
+  DebugMon_Handler         200007c9      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR0             200007cf      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR1             200007d1      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR10            200007e3      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR11            200007e5      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR12            200007e7      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR13            200007e9      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR14            200007eb      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR15            200007ed      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR16            200007ef      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR17            200007f1      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR18            200007f3      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR19            200007f5      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR2             200007d3      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR20            200007f7      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR21            200007f9      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR22            200007fb      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR23            200007fd      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR24            200007ff      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR25            20000801      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR26            20000803      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR27            20000805      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR28            20000807      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR29            20000809      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR3             200007d5      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR30            2000080b      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR31            2000080d      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR4             200007d7      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR5             200007d9      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR6             200007db      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR7             200007dd      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR8             200007df      0x64      4  Code  Wk  Cortex_M_Startup.o
+  ExternalISR9             200007e1      0x64      4  Code  Wk  Cortex_M_Startup.o
+  HardFault_Handler        200007bf      0x64      4  Code  Wk  Cortex_M_Startup.o
+  MemManage_Handler        200007c1      0x64      4  Code  Wk  Cortex_M_Startup.o
+  NMI_Handler              200007bd      0x64      4  Code  Wk  Cortex_M_Startup.o
+  PendSV_Handler           200007cb      0x64      4  Code  Wk  Cortex_M_Startup.o
+  Reset_Handler            2000080f      0x64      4  Code  Gb  Cortex_M_Startup.o
+  SVC_Handler              200007c7      0x64      4  Code  Wk  Cortex_M_Startup.o
+  SysTick_Handler          200007cd      0x64      4  Code  Wk  Cortex_M_Startup.o
+  SystemInit               2000081b      0x64      4  Code  Wk  Cortex_M_Startup.o
+  UsageFault_Handler       200007c5      0x64      4  Code  Wk  Cortex_M_Startup.o
+  _vectors                 20000000      0xc0      2  Code  Gb  Cortex_M_Startup.o
+  _vectors_end             200000c0      0xc0      2  Code  Lc  Cortex_M_Startup.o
+  reset_handler            2000080f      0x64      4  Code  Gb  Cortex_M_Startup.o
+  HardFault_Handler        20000885      0x18      4  Code  Gb  HardFaultHandler.o
+  HardFaultHandler         2000026d      0x34      4  Code  Gb  SEGGER_HardFaultHandler.o
+  SEGGER_RTT_Write         200001fd      0x44      4  Code  Gb  SEGGER_RTT.o
+  SEGGER_RTT_WriteNoLock   2000015d      0xa0      4  Code  Gb  SEGGER_RTT.o
+  _DoInit                  200000c1      0x9c      4  Code  Lc  SEGGER_RTT.o
+  _GetAvailWriteSpace      20000a49      0x3c      2  Code  Lc  SEGGER_RTT.o
+  _SEGGER_RTT              20000f64      0x78      4  Data  Gb  SEGGER_RTT.o
+  _WriteBlocking           200008af      0xb2      2  Code  Lc  SEGGER_RTT.o
+  _WriteNoCheck            20000979      0x7e      2  Code  Lc  SEGGER_RTT.o
+  _acDownBuffer            20000fdc      0x10      4  Data  Lc  SEGGER_RTT.o
+  _acUpBuffer              20000b64     0x400      4  Data  Lc  SEGGER_RTT.o
+  printf                   20000a85      0x4c      2  Code  Gb  SEGGER_RTT_Syscalls_SES.o
+  __SEGGER_init_zero       20001401      0x16      2  Code  Gb  SEGGER_THUMB_Startup.o
+  _start                   20000821      0x64      4  Code  Gb  SEGGER_THUMB_Startup.o
+  ctor_end                 20000858      0x64      4  Code  Lc  SEGGER_THUMB_Startup.o
+  ctor_loop                20000848      0x64      4  Code  Lc  SEGGER_THUMB_Startup.o
+  exit                     20000867      0x64      4  Code  Wk  SEGGER_THUMB_Startup.o
+  exit_loop                20000866      0x64      4  Code  Lc  SEGGER_THUMB_Startup.o
+  start                    2000085f      0x64      4  Code  Lc  SEGGER_THUMB_Startup.o
+  __RAL_hex_lc             2000079c      0x10      4  Cnst  Gb  libc2.o (libc_v8mml_t_le_eabi.a)
+  __RAL_hex_uc             200007ac      0x10      4  Cnst  Gb  libc2.o (libc_v8mml_t_le_eabi.a)
+  __putc                   20000ad1      0x34      2  Code  Gb  libc2.o (libc_v8mml_t_le_eabi.a)
+  __user_format_extender   20000fec       0x4      4  Data  Gb  libc2.o (libc_v8mml_t_le_eabi.a)
+  vsnprintf                20000b05      0x1c      2  Code  Wk  libc2.o (libc_v8mml_t_le_eabi.a)
+  __aeabi_memcpy           200009f7      0x52      2  Code  Wk  libc2_asm.o (libc_v8mml_t_le_eabi.a)
+  __aeabi_memcpy4          20000a03      0x52      2  Code  Wk  libc2_asm.o (libc_v8mml_t_le_eabi.a)
+  __aeabi_memcpy8          20000a03      0x52      2  Code  Wk  libc2_asm.o (libc_v8mml_t_le_eabi.a)
+  memcpy                   200009f7      0x52      2  Code  Wk  libc2_asm.o (libc_v8mml_t_le_eabi.a)
+  strcpy                   20000b21      0x44      2  Code  Wk  libc2_asm.o (libc_v8mml_t_le_eabi.a)
+  __vfprintf               200002a1     0x4fc      4  Code  Gb  libvfprintf_v8mml_t_le_eabi.o
+  __vfprintf_int_nwp       200002a1     0x4fc      4  Code  Gb  libvfprintf_v8mml_t_le_eabi.o
+  main                     20000241      0x2c      4  Code  Gb  main.o
+
+
+***************************************************************************************
+***                                                                                 ***
+***                                  LINK SUMMARY                                   ***
+***                                                                                 ***
+***************************************************************************************
+
+Link complete: 0 errors, 0 warnings, 0 remarks
+
+  Name             Range           Size       Allocated         Used   Loading  (Alignment loss)
+  ---------- -------- -------- --------   -------- -------- --------   -------  ----------------
+  RAM        20000000 2007ffff   524288   20000000 2007ffff   524288   100.00%    518124  98.82%
+
+Section composition:
+
+      2864  RX         0  RW
+        88  RO      3212  ZI
+  ------------   -----------
+      2952 ROM      3212 RAM
