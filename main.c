@@ -56,6 +56,7 @@ Purpose : Generic application start
 *
 *  Function description
 *   Application entry point.
+*comment test for github
 */
 int main(void) {
   int i;
